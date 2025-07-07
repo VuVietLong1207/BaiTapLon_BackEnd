@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PersonalBlog.Models 
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            @* Thêm class "dropdown" *@
+            <a id="manageDropdown" class="nav-link text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @* Thêm data-bs-toggle và aria-expanded *@
+                Hello @UserManager.GetUserName(User)!
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="manageDropdown">
+                @* Menu dropdown *@
+                <li><a class="dropdown-item" id="manage" asp-area="" asp-controller="Account" asp-action="Manage" title="Manage">Manage Account</a></li> @* Liên kết đến trang quản lý tài khoản *@
+                <li><a class="dropdown-item" id="changePassword" asp-area="" asp-controller="Account" asp-action="ChangePassword" title="Change Password">Change Password</a></li> @* Liên kết đổi mật khẩu *@
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form id="logoutForm" class="form-inline" asp-controller="Account" asp-action="Logout" method="post" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button id="logout" type="submit" class="dropdown-item btn btn-link">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-controller="Account" asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+    }
+</ul>

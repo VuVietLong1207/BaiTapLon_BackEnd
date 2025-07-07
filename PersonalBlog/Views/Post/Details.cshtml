@@ -1,0 +1,108 @@
+﻿@model Tuple<PersonalBlog.Models.Post, List<PersonalBlog.Models.Comment>>
+
+@{
+    ViewData["Title"] = Model.Item1.Title;
+    var post = Model.Item1;
+    var comments = Model.Item2;
+}
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background: linear-gradient(to right, #fdfbfb, #ebedee);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .details-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+    }
+
+    .btn-rounded {
+        border-radius: 20px;
+        padding: 8px 20px;
+    }
+
+    .post-content {
+        white-space: pre-line;
+    }
+
+    .comment-box {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+    }
+
+    .comment-form textarea {
+        resize: none;
+    }
+</style>
+
+<div class="container">
+    <div class="details-container">
+        <h2 class="text-primary">@post.Title</h2>
+        <p class="text-muted">🕒 Ngày đăng: @post.CreatedAt.ToString("dd/MM/yyyy")</p>
+        <p class="text-muted">🏷️ Danh mục: <strong>@post.Category</strong></p>
+
+        @if (!string.IsNullOrEmpty(post.ImageUrl))
+        {
+            <img src="@post.ImageUrl" alt="Ảnh bài viết" class="img-fluid rounded mb-3" />
+        }
+
+        <div class="post-content mb-4">@post.Content</div>
+
+        <a href="@Url.Action("Index", "Post")" class="btn btn-secondary btn-rounded">← Quay lại</a>
+        <a href="@Url.Action("Edit", "Post", new { id = post.Id })" class="btn btn-warning btn-rounded ms-2">✏️ Sửa bài viết</a>
+        <a href="@Url.Action("Delete", "Post", new { id = post.Id })" class="btn btn-danger btn-rounded ms-2" onclick="return confirm('Bạn có chắc muốn xóa bài viết này?')">🗑️ Xóa</a>
+
+        <hr class="my-5" />
+
+        <h4 class="mb-4">💬 Bình luận</h4>
+
+        @if (comments != null && comments.Count > 0)
+        {
+            foreach (var comment in comments)
+            {
+                <div class="comment-box">
+                    <strong>@comment.Author</strong>
+                    <span class="text-muted small"> • @comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    <p class="mb-0">@comment.Content</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Chưa có bình luận nào.</p>
+        }
+
+        <hr class="my-5" />
+
+        <h5 class="mb-3">✍️ Gửi bình luận mới</h5>
+
+        <form asp-action="AddComment" method="post" class="comment-form">
+            <input type="hidden" name="PostId" value="@post.Id" />
+
+            <div class="mb-3">
+                <label class="form-label">Tên của bạn</label>
+                <input type="text" name="Author" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nội dung bình luận</label>
+                <textarea name="Content" class="form-control" rows="3" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-rounded">Gửi bình luận</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
